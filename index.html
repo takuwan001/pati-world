@@ -8,15 +8,22 @@
 <script>
   if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
   (function(){
+    var active = true;
+    ['touchstart', 'wheel'].forEach(function(ev){
+      window.addEventListener(ev, function(){ active = false; }, {passive:true, once:true});
+    });
     var tries = 0;
     function forceTop(){
+      if (!active) return;
       if (window.scrollY !== 0) window.scrollTo(0, 0);
-      if (tries++ < 40) requestAnimationFrame(forceTop);
+      if (tries++ < 150) requestAnimationFrame(forceTop);
     }
-    window.addEventListener('pageshow', forceTop);
-    document.addEventListener('DOMContentLoaded', forceTop);
-    window.addEventListener('load', forceTop);
+    function restart(){ tries = 0; active = true; forceTop(); }
+    window.addEventListener('pageshow', restart);
+    document.addEventListener('DOMContentLoaded', restart);
+    window.addEventListener('load', restart);
     requestAnimationFrame(forceTop);
+    window.__forceScrollTop = restart;
   })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -361,6 +368,7 @@ fetch('articles.json')
     ARTICLES = data;
     renderFilters();
     renderGrid();
+    if (window.__forceScrollTop) window.__forceScrollTop();
   })
   .catch(()=>{
     document.getElementById('count').textContent = '';
