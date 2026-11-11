@@ -7,7 +7,17 @@
 <meta name="description" content="フランス・ベルギー・イタリア・日本・アメリカ・イギリス、世界の菓子業界の最新トピックをAIが集め日本語で届けるニュースサイト。">
 <script>
   if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
-  window.addEventListener('pageshow', function(){ window.scrollTo(0, 0); });
+  (function(){
+    var tries = 0;
+    function forceTop(){
+      if (window.scrollY !== 0) window.scrollTo(0, 0);
+      if (tries++ < 40) requestAnimationFrame(forceTop);
+    }
+    window.addEventListener('pageshow', forceTop);
+    document.addEventListener('DOMContentLoaded', forceTop);
+    window.addEventListener('load', forceTop);
+    requestAnimationFrame(forceTop);
+  })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
