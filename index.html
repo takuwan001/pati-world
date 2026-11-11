@@ -9,8 +9,10 @@
   if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
   (function(){
     var active = true;
+    var cancelArmed = false;
+    function arm(){ cancelArmed = true; }
     ['touchstart', 'wheel'].forEach(function(ev){
-      window.addEventListener(ev, function(){ active = false; }, {passive:true, once:true});
+      window.addEventListener(ev, function(){ if (cancelArmed) active = false; }, {passive:true});
     });
     var tries = 0;
     function forceTop(){
@@ -18,10 +20,15 @@
       if (window.scrollY !== 0) window.scrollTo(0, 0);
       if (tries++ < 150) requestAnimationFrame(forceTop);
     }
-    function restart(){ tries = 0; active = true; forceTop(); }
+    function restart(){
+      tries = 0; active = true; cancelArmed = false;
+      setTimeout(arm, 600);
+      forceTop();
+    }
     window.addEventListener('pageshow', restart);
     document.addEventListener('DOMContentLoaded', restart);
     window.addEventListener('load', restart);
+    setTimeout(arm, 600);
     requestAnimationFrame(forceTop);
     window.__forceScrollTop = restart;
   })();
