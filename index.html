@@ -117,6 +117,7 @@
   .brand{
     font-family:'Bodoni Moda', serif; font-weight:700; font-size:1.9rem;
     letter-spacing:-0.01em; margin:0; display:flex; align-items:baseline; gap:.3em;
+    border:none; background:none; padding:0; color:inherit; cursor:pointer;
   }
   .brand .dot{color:var(--framboise)}
   .brand .world{color:var(--bleu); font-style:italic; font-weight:500}
@@ -255,7 +256,7 @@
 
 <header class="top">
   <div class="wrap">
-    <p class="brand"><span class="name">P<span class="dot">â</span>ti.</span> <span class="world">World</span></p>
+    <button type="button" class="brand" id="logoBtn" aria-label="トップページに戻る"><span class="name">P<span class="dot">â</span>ti.</span> <span class="world">World</span></button>
     <p class="tagline">世界の菓子業界ニュース、AIが毎日集めてお届け</p>
   </div>
 </header>
@@ -487,6 +488,15 @@ function closeDetail(){
 }
 document.addEventListener('keydown', e=>{
   if(e.key==='Escape') closeDetail();
+});
+
+document.getElementById('logoBtn').addEventListener('click', ()=>{
+  activeCountry = 'all';
+  activeCat = 'all';
+  closeDetail();
+  renderFilters();
+  renderGrid();
+  window.scrollTo({top:0, behavior:'smooth'});
 });
 
 fetch('articles.json')
