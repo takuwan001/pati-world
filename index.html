@@ -316,6 +316,18 @@ let ARTICLES = [];
 let activeCountry = 'all';
 let activeCat = 'all';
 
+function escapeHtml(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function safeUrl(u){
+  try {
+    const parsed = new URL(String(u ?? ''), location.href);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return escapeHtml(u);
+  } catch(e) {}
+  return '#';
+}
+
 function renderFilters(){
   const cRow = document.getElementById('countryRow');
   cRow.innerHTML = COUNTRIES.map(c => `
@@ -382,15 +394,15 @@ function renderSidebar(){
 
 function countryLabel(id){
   const c = COUNTRIES.find(x=>x.id===id);
-  return c ? c.label : id;
+  return escapeHtml(c ? c.label : id);
 }
 function catLabel(id){
   const k = CATS.find(x=>x.id===id);
-  return k ? k.label : id;
+  return escapeHtml(k ? k.label : id);
 }
 
 function thumbHtml(a, cls){
-  if (a.image) return `<img class="${cls}" src="${a.image}" alt="" loading="lazy">`;
+  if (a.image) return `<img class="${cls}" src="${escapeHtml(a.image)}" alt="" loading="lazy">`;
   const grad = PH_GRADIENTS[a.cat] || PH_GRADIENTS.collection;
   return `<div class="${cls}" style="background:${grad}"></div>`;
 }
@@ -404,9 +416,9 @@ function heroHtml(a){
           <span class="badge country">${countryLabel(a.country)}</span>
           <span class="badge cat">${catLabel(a.cat)}</span>
         </div>
-        <h2>${a.title}</h2>
-        <p class="summary">${a.summary}</p>
-        <div class="meta">${a.source} ・ ${a.addedAt}</div>
+        <h2>${escapeHtml(a.title)}</h2>
+        <p class="summary">${escapeHtml(a.summary)}</p>
+        <div class="meta">${escapeHtml(a.source)} ・ ${escapeHtml(a.addedAt)}</div>
       </div>
     </article>
   `;
@@ -419,8 +431,8 @@ function headlineRowHtml(a){
       ${thumbHtml(a, 'thumb-sm')}
       <div class="info">
         <div class="kicker">${flag} ${countryLabel(a.country)} ・ ${catLabel(a.cat)}</div>
-        <h3>${a.title}</h3>
-        <div class="meta">${a.source} ・ ${a.addedAt}</div>
+        <h3>${escapeHtml(a.title)}</h3>
+        <div class="meta">${escapeHtml(a.source)} ・ ${escapeHtml(a.addedAt)}</div>
       </div>
     </article>
   `;
@@ -468,15 +480,15 @@ function openDetail(a){
   const sheet = document.getElementById('sheet');
   sheet.innerHTML = `
     <button class="sheet-close" id="sheetClose" aria-label="閉じる">✕</button>
-    ${a.image ? `<img class="thumb" src="${a.image}" alt="">` : ''}
+    ${a.image ? `<img class="thumb" src="${escapeHtml(a.image)}" alt="">` : ''}
     <div class="sheet-body">
       <div class="badges">
         <span class="badge country">${countryLabel(a.country)}</span>
         <span class="badge cat">${catLabel(a.cat)}</span>
       </div>
-      <h2>${a.title}</h2>
-      <p class="detail">${a.detail}</p>
-      <a class="src-link" href="${a.url}" target="_blank" rel="noopener">原文を読む(${a.source})↗</a>
+      <h2>${escapeHtml(a.title)}</h2>
+      <p class="detail">${escapeHtml(a.detail)}</p>
+      <a class="src-link" href="${safeUrl(a.url)}" target="_blank" rel="noopener">原文を読む(${escapeHtml(a.source)})↗</a>
     </div>
   `;
   overlay.hidden = false;
