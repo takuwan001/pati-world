@@ -253,6 +253,15 @@
     display:inline-block; font-family:'Space Mono', monospace; font-size:.8rem;
     color:var(--framboise-ink); border-bottom:1px solid currentColor; margin-bottom:22px;
   }
+  .chef-comment{
+    background:var(--surface-2); border-left:3px solid var(--framboise);
+    border-radius:10px; padding:14px 16px 16px; margin:0 0 18px;
+  }
+  .chef-comment .label{
+    font-family:'Space Mono', monospace; font-size:.68rem; font-weight:700;
+    letter-spacing:.03em; color:var(--framboise-ink); margin:0 0 8px;
+  }
+  .chef-comment p{font-size:.92rem; line-height:1.75; color:var(--ink); margin:0}
 
   footer{
     border-top:1px solid var(--border); padding-block:24px;
@@ -505,6 +514,11 @@ function openDetail(a){
       </div>
       <h2>${escapeHtml(a.title)}</h2>
       <p class="detail">${escapeHtml(a.detail)}</p>
+      ${a.chefComment ? `
+      <div class="chef-comment">
+        <p class="label">現役パティシエの視点</p>
+        <p>${escapeHtml(a.chefComment)}</p>
+      </div>` : ''}
       <a class="src-link" href="${safeUrl(a.url)}" target="_blank" rel="noopener">原文を読む(${escapeHtml(a.source)})↗</a>
     </div>
   `;
